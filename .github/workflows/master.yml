@@ -1,0 +1,100 @@
+name: Complete Gates
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' 
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier check
+        run: npm run prettier:check
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' 
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run unit tests
+        run: npm run test:ci
+
+  code-analysis:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' 
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run code analysis
+        run: npm run lint && npm run prettier:check
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' 
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build --prod
+
+      - name: Start the application
+        run: npm run serve:sw & # Start the application in the background
+
+      - name: Wait for the application to start
+        run: sleep 15 # Wait for a few seconds to ensure the app is up
+
+      - name: Run E2E tests
+        run: npm run cypress:run # Run Cypress E2E tests
+
+  final-message:
+    runs-on: ubuntu-latest
+    needs: [lint, test, code-analysis, e2e]
+    steps:
+      - name: Print completion message
+        run: echo "Henry Completed Testing and Build"
