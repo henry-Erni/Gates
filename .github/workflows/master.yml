@@ -92,7 +92,7 @@ jobs:
       - name: Run E2E tests
         run: npm run cypress:run # Run Cypress E2E tests
 
-  final-message:
+  HenryArpon_Completed_the_pipeline:
     runs-on: ubuntu-latest
     needs: [lint, test, code-analysis, e2e]
     steps:
