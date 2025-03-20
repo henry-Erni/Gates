@@ -1,4 +1,4 @@
-name: Complete Gates
+name: Final Gates
 
 on:
   push:
@@ -84,13 +84,40 @@ jobs:
         run: npm run build --prod
 
       - name: Start the application
-        run: npm run serve:sw & # Start the application in the background
-
+        run: npm run serve:sw & 
+        
       - name: Wait for the application to start
-        run: sleep 15 # Wait for a few seconds to ensure the app is up
+        run: sleep 15 
 
       - name: Run E2E tests
-        run: npm run cypress:run # Run Cypress E2E tests
+        run: npm run cypress:run
+        
+  build-artifact:
+    runs-on: ubuntu-latest
+    needs: e2e
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+  
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20' 
+  
+      - name: Install dependencies
+        run: npm install
+  
+      - name: Build the application
+        run: npm run build --prod
+  
+      - name: Create zip file of build artifacts
+        run: zip -r HenryArpon-build-artifacts.zip dist/ 
+  
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: HenryArpon-build-artifacts
+          path: HenryArpon-build-artifacts.zip
 
   HenryArpon_Completed_the_pipeline:
     runs-on: ubuntu-latest
