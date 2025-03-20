@@ -114,7 +114,7 @@ jobs:
         run: zip -r HenryArpon-build-artifacts.zip dist/ 
   
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: HenryArpon-build-artifacts
           path: HenryArpon-build-artifacts.zip
